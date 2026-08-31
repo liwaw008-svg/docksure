@@ -31,3 +31,8 @@ The repository includes two transparent demo evidence records used for a real St
 - Deploy tx: `0x19f4aca50305ac3949b6a8da40dfc7a4e4439d13b108771ad38d45bc015c0a69`
 - Live app: `https://docksure.pages.dev/`
 
+## Proven StudioNet lifecycle
+
+- Fund shipment: `0x0e08c705edd7e8d950a9d138bfe3451063ba7cbe77fd0f388ae83b68254372c2`
+- Carrier acceptance: `0xdcf97984573cad4ccf8008156cbd659e1e8e37346fb4aad2d6c563d1b31e23c3`
+- Evidence consensus and ON_TIME settlement: `0x51f264aa80f9f2d26abc17abd0d03b5cf8046c2372cb27991d34b247d0b0280b`
