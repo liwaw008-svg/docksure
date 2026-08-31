@@ -33,4 +33,8 @@ The repository includes two transparent demo evidence records used for a real St
 
 ## Proven StudioNet lifecycle
 
-The replacement deployment is live. Fresh cross-wallet lifecycle transactions are recorded after the final source commit so the evidence policy can point at immutable records.
+- Customer funding with two immutable authorized sources: `0x8e57c879846c4ccf63261daf14675c10f05c9787a29dfd2cb1a5b85d980fd02f`
+- Named carrier acceptance from a different wallet: `0x22c80ead181d5b47d21d755682aa10e0dddb35f17558a7edf5603a98f871758b`
+- Evidence consensus, two stored content digests and ON_TIME settlement: `0xc7d45677257c5ef210f18fbd4c60f931294ebab8dbeb8bcbeb48af2031260021`
+
+The verification script also simulates a carrier submission from unauthorized origins and requires that it fail before the positive settlement path runs.
