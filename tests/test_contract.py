@@ -13,4 +13,10 @@ def test_money_moves_only_after_bounded_verdict():
     assert "on='finalized'" in S
 def test_sources_are_refetched_by_each_validator():
     assert 'gl.nondet.web.get(url)' in S and 'run_nondet_unsafe(run,validate)' in S
-
+def test_customer_binds_sources_and_consensus_binds_content():
+    assert 'allowed_source_prefixes:list[str]' in S
+    assert 'evidence origin not authorized by customer' in S
+    assert "mine['digests']==theirs.get('digests')" in S
+    assert 'hashlib.sha256' in S and "'evidence_digests'" in S
+def test_duplicate_sources_are_rejected():
+    assert 'allowed[0]==allowed[1]' in S and 'urls[0]==urls[1]' in S
