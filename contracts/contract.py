@@ -4,6 +4,7 @@ from genlayer import *
 from dataclasses import dataclass
 import json
 import hashlib
+from urllib.parse import urlsplit,unquote
 
 EXPECTED='[EXPECTED]'; EXTERNAL='[EXTERNAL]'; TRANSIENT='[TRANSIENT]'; LLM='[LLM_ERROR]'
 VERDICTS=('ON_TIME','EXCUSED','LATE','INSUFFICIENT')
@@ -22,6 +23,20 @@ def uniq_ints(v,limit):
         except:continue
         if 0<=i<limit and i not in out:out.append(i)
     return sorted(out)
+def parsed_source(value):
+    raw=clean(value,500);p=urlsplit(raw)
+    if p.scheme.lower()!='https' or not p.hostname or p.username or p.password or p.fragment:raise gl.vm.UserError(f'{EXPECTED} valid HTTPS source required')
+    host=p.hostname.lower().rstrip('.')
+    try:port=p.port
+    except:raise gl.vm.UserError(f'{EXPECTED} valid HTTPS source required')
+    origin='https://'+host+((':'+str(port)) if port and port!=443 else '')
+    path=unquote(p.path or '/')
+    if any(x in ('.','..') for x in path.split('/')):raise gl.vm.UserError(f'{EXPECTED} normalized source path required')
+    normalized='/'+'/'.join(x for x in path.split('/') if x)
+    return origin,normalized or '/'
+def matches_slot(rule,url):
+    ro,rp=parsed_source(rule);uo,up=parsed_source(url)
+    return ro==uo and (up==rp or (rp!='/' and up.startswith(rp.rstrip('/')+'/')))
 
 @allow_storage
 @dataclass
@@ -44,8 +59,9 @@ class DockSure(gl.Contract):
         if len(clean(lane,300))<12 or len(clean(promise,900))<40:raise gl.vm.UserError(f'{EXPECTED} complete lane and SLA required')
         value=int(gl.message.value)
         if value<=0:raise gl.vm.UserError(f'{EXPECTED} escrow required')
-        allowed=[clean(x,500) for x in allowed_source_prefixes[:8] if clean(x,500).startswith('https://')]
-        if len(allowed)<2 or allowed[0]==allowed[1]:raise gl.vm.UserError(f'{EXPECTED} customer must bind two distinct trusted evidence origins')
+        allowed=[clean(x,500) for x in allowed_source_prefixes[:8]]
+        keys=[parsed_source(x) for x in allowed]
+        if len(allowed)<2 or len(set(keys))!=len(keys):raise gl.vm.UserError(f'{EXPECTED} customer must bind distinct trusted HTTPS source slots')
         self.shipments[key]=Shipment(gl.message.sender_address,Address(carrier),clean(lane,300),clean(promise,900),json.dumps(allowed),u256(value),'OFFERED','[]','[]','','[]','')
         self.ids.append(key)
 
@@ -61,6 +77,13 @@ class DockSure(gl.Contract):
         s=self._get(i)
         if gl.message.sender_address!=s.customer or s.status!='OFFERED':raise gl.vm.UserError(f'{EXPECTED} active customer offer required')
         s.status='CANCELLED'; self._pay(s.customer,int(s.amount))
+
+    @gl.public.write
+    def recover_unsettled(self,i:str)->None:
+        s=self._get(i)
+        if gl.message.sender_address!=s.customer:raise gl.vm.UserError(f'{EXPECTED} customer only')
+        if s.status not in ('IN_TRANSIT','NEEDS_EVIDENCE'):raise gl.vm.UserError(f'{EXPECTED} unsettled accepted shipment required')
+        s.status='RECOVERED';self._pay(s.customer,int(s.amount))
 
     def _evaluate(self,s:Shipment,urls:list[str])->dict:
         def run()->dict:
@@ -89,9 +112,12 @@ class DockSure(gl.Contract):
         if gl.message.sender_address!=s.carrier:raise gl.vm.UserError(f'{EXPECTED} carrier only')
         if s.status not in ('IN_TRANSIT','NEEDS_EVIDENCE'):raise gl.vm.UserError(f'{EXPECTED} shipment not reviewable')
         urls=[clean(x,500) for x in evidence_urls[:8]]
-        if len(urls)<2 or urls[0]==urls[1]:raise gl.vm.UserError(f'{EXPECTED} two distinct evidence sources required')
-        allowed=json.loads(s.allowed_sources)
-        if any(not any(url.startswith(prefix) for prefix in allowed) for url in urls):raise gl.vm.UserError(f'{EXPECTED} evidence origin not authorized by customer')
+        if len(urls)<2 or len(set(urls))!=len(urls):raise gl.vm.UserError(f'{EXPECTED} two distinct evidence sources required')
+        allowed=json.loads(s.allowed_sources);used=[]
+        for url in urls:
+            matches=[index for index,rule in enumerate(allowed) if matches_slot(rule,url)]
+            if len(matches)!=1 or matches[0] in used:raise gl.vm.UserError(f'{EXPECTED} evidence must match one distinct customer-authorized source slot')
+            used.append(matches[0])
         result=self._evaluate(s,urls); verdict=result['verdict']
         s.evidence=json.dumps(urls);s.digests=json.dumps(result['digests']);s.verdict=verdict;s.exceptions=json.dumps(result['exceptions']);s.rationale=result['rationale']
         if verdict=='INSUFFICIENT':s.status='NEEDS_EVIDENCE';return
