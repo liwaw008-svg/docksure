@@ -22,3 +22,7 @@ def test_duplicate_sources_are_rejected():
     assert 'len(set(keys))!=len(keys)' in S and 'len(set(urls))!=len(urls)' in S
 def test_sources_use_parsed_origin_and_path_slots():
     assert 'urlsplit' in S and 'ro==uo' in S and 'matches[0] in used' in S
+def test_accepted_shipments_have_customer_safe_timeout_recovery():
+    assert "s.recovery_at=u256(now()+2592000)" in S and 'expired unsettled accepted shipment required' in S
+def test_full_response_is_hashed_before_prompt_bounding():
+    assert "hashlib.sha256(raw).hexdigest()" in S and "clean(raw.decode('utf-8'),2400)" in S

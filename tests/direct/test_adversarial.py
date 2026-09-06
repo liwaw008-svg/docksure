@@ -20,7 +20,9 @@ def test_two_records_cannot_reuse_one_authorized_slot(direct_vm,direct_deploy,di
         c.submit_delivery('SAME-SLOT',['https://carrier.example/records/shipment-1','https://carrier.example/records/shipment-1/duplicate'])
 
 def test_customer_can_recover_after_acceptance(direct_vm,direct_deploy,direct_alice,direct_bob):
-    c=opened(direct_vm,direct_deploy,direct_alice,direct_bob,'RECOVERY');direct_vm.sender=direct_alice
+    direct_vm.warp('2030-01-01T00:00:00+00:00');c=opened(direct_vm,direct_deploy,direct_alice,direct_bob,'RECOVERY');direct_vm.sender=direct_alice
+    with direct_vm.expect_revert('expired unsettled accepted shipment required'):c.recover_unsettled('RECOVERY')
+    direct_vm.warp('2030-02-01T00:00:01+00:00')
     c.recover_unsettled('RECOVERY')
     assert c.get_shipment('RECOVERY')['status']=='RECOVERED'
     with direct_vm.expect_revert('shipment not reviewable'):

@@ -8,7 +8,7 @@ DockSure is a freight SLA escrow protocol, not a tracking-page classifier. A cus
 2. `accept_shipment` is restricted to the named carrier. Before acceptance, only the customer can cancel and recover escrow.
 3. `submit_delivery` requires two distinct sources matching the customer's frozen policy. Every validator re-fetches the same records and agrees on their SHA-256 content digests as well as the bounded verdict.
 4. `ON_TIME` and `EXCUSED` pay the carrier; `LATE` refunds the customer; `INSUFFICIENT` moves no funds and permits stronger evidence.
-5. `recover_unsettled` gives the customer an explicit recovery transition after carrier acceptance and before settlement.
+5. Carrier acceptance opens a 30-day evidence window. After it expires, `recover_unsettled` lets the customer recover escrow from an unresolved shipment without carrier cooperation.
 6. Transfers emit only on `finalized`, after the appeal-sensitive consensus phase.
 
 Evidence authorization parses HTTPS scheme, hostname, port and normalized path. Hostname-prefix tricks, encoded traversal, ambiguous overlapping slots and multiple records reusing one authorized slot are rejected before any web fetch.
