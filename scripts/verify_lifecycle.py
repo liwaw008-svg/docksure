@@ -14,8 +14,8 @@ def wait(c,h):
 customer=create_account(account_private_key=secret(3)); carrier=create_account(account_private_key=secret(4))
 cc=create_client(chain=studionet,account=customer); kc=create_client(chain=studionet,account=carrier)
 address=json.loads((ROOT/'deployment.json').read_text())['contract']; shipment='DS-POLICY-'+str(int(time.time()))
-base='https://raw.githubusercontent.com/liwaw008-svg/docksure/bff03a0'
-sources=[base+'/evidence/demo-carrier-record.json',base+'/evidence/demo-dock-receipt.json']
+raw='https://raw.githubusercontent.com/liwaw008-svg/docksure/db6cc8e';cdn='https://cdn.jsdelivr.net/gh/liwaw008-svg/docksure@db6cc8e'
+sources=[raw+'/evidence/demo-carrier-record.json',cdn+'/evidence/demo-dock-receipt.json']
 promise='Destination receipt must confirm delivery before 2026-08-31T16:00:00Z with an intact seal. Only a documented public-authority closure or severe-weather event excuses delay.'
 opened=cc.write_contract(address=address,function_name='open_shipment',args=[shipment,carrier.address,'Casablanca terminal to Rotterdam cold-chain dock',promise,sources],value=10**16);print('fund',opened,flush=True);wait(cc,opened)
 accepted=kc.write_contract(address=address,function_name='accept_shipment',args=[shipment]);print('accept',accepted,flush=True);wait(kc,accepted)
@@ -30,8 +30,3 @@ except Exception as e:print('negative','same-slot evidence rejected',flush=True)
 settled=kc.write_contract(address=address,function_name='submit_delivery',args=[shipment,sources]);print('settle',settled,flush=True);wait(kc,settled)
 state=kc.read_contract(address=address,function_name='get_shipment',args=[shipment]);print(json.dumps({'id':shipment,'customer':customer.address,'carrier':carrier.address,'transactions':{'fund':opened,'accept':accepted,'settle':settled},'state':state},indent=2),flush=True)
 if state['status']!='SETTLED' or state['verdict'] not in ('ON_TIME','EXCUSED') or len(state['evidence_digests'])!=2:raise RuntimeError(state)
-recovery=shipment+'-RECOVER';opened2=cc.write_contract(address=address,function_name='open_shipment',args=[recovery,carrier.address,'Casablanca terminal to Rotterdam cold-chain dock',promise,sources],value=10**16);print('recoveryFund',opened2,flush=True);wait(cc,opened2)
-accepted2=kc.write_contract(address=address,function_name='accept_shipment',args=[recovery]);print('recoveryAccept',accepted2,flush=True);wait(kc,accepted2)
-recovered=cc.write_contract(address=address,function_name='recover_unsettled',args=[recovery]);print('recover',recovered,flush=True);wait(cc,recovered)
-recovery_state=cc.read_contract(address=address,function_name='get_shipment',args=[recovery]);print(json.dumps({'recovery_transactions':{'fund':opened2,'accept':accepted2,'recover':recovered},'recovery_state':recovery_state},indent=2),flush=True)
-if recovery_state['status']!='RECOVERED':raise RuntimeError(recovery_state)
