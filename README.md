@@ -30,7 +30,9 @@ The repository includes two transparent demo evidence records used for a real St
 
 ## Deployment
 
-- Contract: `0x90E1d13152213D765Dcc6a5072ed434151033435`
+- Contract: `0xCeBf663069290e2Db1086307e7c60c85280D2b12`
+- Deploy tx: `0x843b4e167e1d0e9d4fa2dd3145d2f847996056f8f8c322e3e3d3cd70a6342f73`
+- Reviewed source: `118f76b1ea5ed761233923145b77cb8b48f3939a`
 - Deploy tx: `0x46203926b1267206abdcc12f0ca8ec56df35322f62ff0b7bb91390caf3b2de40`
 - Live app: `https://docksure.pages.dev/`
 

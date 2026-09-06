@@ -1,6 +1,8 @@
 {
   "project": "docksure",
   "network": "StudioNet",
-  "contract": "0x90E1d13152213D765Dcc6a5072ed434151033435",
-  "transaction": "0x46203926b1267206abdcc12f0ca8ec56df35322f62ff0b7bb91390caf3b2de40"
+  "contract": "0xCeBf663069290e2Db1086307e7c60c85280D2b12",
+  "transaction": "0x843b4e167e1d0e9d4fa2dd3145d2f847996056f8f8c322e3e3d3cd70a6342f73",
+  "sourceCommit": "118f76b1ea5ed761233923145b77cb8b48f3939a",
+  "receiptStatus": "ACCEPTED"
 }
