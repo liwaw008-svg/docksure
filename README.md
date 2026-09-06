@@ -33,16 +33,12 @@ The repository includes two transparent demo evidence records used for a real St
 - Contract: `0xCeBf663069290e2Db1086307e7c60c85280D2b12`
 - Deploy tx: `0x843b4e167e1d0e9d4fa2dd3145d2f847996056f8f8c322e3e3d3cd70a6342f73`
 - Reviewed source: `118f76b1ea5ed761233923145b77cb8b48f3939a`
-- Deploy tx: `0x46203926b1267206abdcc12f0ca8ec56df35322f62ff0b7bb91390caf3b2de40`
 - Live app: `https://docksure.pages.dev/`
 
 ## Proven StudioNet lifecycle
 
-- Customer funding with two immutable authorized source slots: `0x8dd300c49c7e728d1bb3a7fb77bbc830ae99b6ab660cdffb8ba044878289e08f`
-- Named carrier acceptance from a different wallet: `0xdc78121b6aa5a1677023a3f6db2de9a400c5e72d18505ffa852d49ce37fbcf66`
-- Evidence consensus, two stored content digests and ON_TIME settlement: `0x7c3ae3ed2e5a4413f525bc98515a55832093ee9e1e764cdefb4e630e5d292ef3`
-- Recovery flow funding: `0xf32e59b0b00dfd841cc69faec75ae34fa49da4280d378132edc032d2778fb0f7`
-- Recovery flow carrier acceptance: `0x18d516a968cc71a7ce7917cb3d78df1f2921c351eafd3e2c5fed1a1c65f0f07c`
-- Customer escrow recovery after acceptance: `0x04d0453df7e5a43e0b7f318c17012b4ce1aca857f10efa3cefc7b5f3c569cf79`
+- Customer funding with two immutable authorized source slots: `0xb2671b4d4015aa79b63093b6c1021304c603368ae106ec4e0f9f63f2942c68a8`
+- Named carrier acceptance from a different wallet: `0x02817f59cf2415cabf87f91642e0c1fc6cb06b09610a5b1ed33689249c66b603`
+- Evidence consensus, two stored content digests and ON_TIME settlement: `0xaff53789902dbe055d6a1cf83c1d6b04a920f632f138b9aaaff5df5b5bb33755`
 
-The verification script also requires hostname-prefix bypass and same-slot evidence simulations to fail before the positive settlement path runs. Direct behavioral regression tests cover both attacks and fund recovery.
+The verification script also requires hostname-prefix bypass and same-slot evidence simulations to fail before the positive settlement path runs. Direct behavioral regression tests cover both attacks, rejection of early recovery, and customer recovery after the 30-day deadline. The complete accepted run is recorded in `evidence/network-run.json`.

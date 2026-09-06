@@ -1,0 +1,25 @@
+{
+  "network": "StudioNet",
+  "contract": "0xCeBf663069290e2Db1086307e7c60c85280D2b12",
+  "deploymentTransaction": "0x843b4e167e1d0e9d4fa2dd3145d2f847996056f8f8c322e3e3d3cd70a6342f73",
+  "shipmentId": "DS-POLICY-1788710947",
+  "transactions": {
+    "fund": "0xb2671b4d4015aa79b63093b6c1021304c603368ae106ec4e0f9f63f2942c68a8",
+    "accept": "0x02817f59cf2415cabf87f91642e0c1fc6cb06b09610a5b1ed33689249c66b603",
+    "settle": "0xaff53789902dbe055d6a1cf83c1d6b04a920f632f138b9aaaff5df5b5bb33755"
+  },
+  "negativeSimulations": {
+    "hostnamePrefixBypass": "REJECTED",
+    "sameAuthorizedSlot": "REJECTED"
+  },
+  "finalState": {
+    "status": "SETTLED",
+    "verdict": "ON_TIME",
+    "escrowWei": "10000000000000000",
+    "recoveryAt": 1791302963,
+    "evidenceDigests": [
+      "cc061638231c16a8fa6d43ce0e74ca634535af2927cde945396ae1cfa2fa2d63",
+      "8627b1cfc32e9727f3e69a8114d34eb4036970db3b75ed6d49a51625c9f3d1d2"
+    ]
+  }
+}
